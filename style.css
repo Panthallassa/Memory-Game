@@ -1,7 +1,67 @@
-#game div {
-  border: 1px solid black;
-  width: 15%;
-  height: 200px;
-  margin: 10px;
+body {
+  background-color: #8bd6d6;
+  margin: 0;
+}
+
+.container {
+  text-align: center;
+}
+
+h1 {
+  text-align: center;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  color: #ff8943;
+  background-color: #0dc9c9;
+  margin-top: 10px;
+  padding: 10px;
   display: inline-block;
+  border-radius: 15px;
+}
+
+#game {
+  text-align: center;
+}
+
+#game div {
+  border: 3px solid;
+  border-radius: 10px;
+  border-color: #0dc9c9;
+  background-color: #ffc3a0;
+  width: 15%;
+  height: 115px;
+  display: inline-block;
+  line-height: 115px;
+  vertical-align: middle;
+  margin: 10px auto;
+  box-sizing: border-box;
+  max-width: 115px;
+  min-width: 115px;
+}
+
+.question-mark {
+  font-size: 90px;
+  color: #ff8943;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.button {
+  display: block;
+  margin: 20px auto;
+  font-size: 25px;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  background-color: #8bd6d6;
+  color: #ff8943;
+  border-radius: 40px;
+  border: 3px solid;
+  border-color: none;
+  padding: 20px;
+  cursor: pointer;
+}
+
+.button-container {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 999;
 }
