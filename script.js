@@ -1,4 +1,5 @@
 const gameContainer = document.getElementById("game");
+const restartButtonContainer = document.getElementById("button-container");
 
 const COLORS = [
   "red",
@@ -13,21 +14,19 @@ const COLORS = [
   "purple"
 ];
 
-// here is a helper function to shuffle an array
-// it returns the same array with values shuffled
-// it is based on an algorithm called Fisher Yates if you want ot research more
+let canClick = true;
+let selectedCards = [];
+let restartButton;
+let matchedPairsCount = 0;
+let score = 0;
+
 function shuffle(array) {
   let counter = array.length;
 
-  // While there are elements in the array
+ 
   while (counter > 0) {
-    // Pick a random index
     let index = Math.floor(Math.random() * counter);
-
-    // Decrease counter by 1
     counter--;
-
-    // And swap the last element with it
     let temp = array[counter];
     array[counter] = array[index];
     array[index] = temp;
@@ -38,30 +37,126 @@ function shuffle(array) {
 
 let shuffledColors = shuffle(COLORS);
 
-// this function loops over the array of colors
-// it creates a new div and gives it a class with the value of the color
-// it also adds an event listener for a click for each card
 function createDivsForColors(colorArray) {
-  for (let color of colorArray) {
-    // create a new div
-    const newDiv = document.createElement("div");
 
-    // give it a class attribute for the value we are looping over
+  for (let color of colorArray) {
+    
+    const newDiv = document.createElement("div");
+    const questionMark = document.createElement("span");
+  
+    newDiv.classList.add("card");
     newDiv.classList.add(color);
 
-    // call a function handleCardClick when a div is clicked on
+    questionMark.textContent = "?";
+    questionMark.classList.add("question-mark");
+
+    newDiv.appendChild(questionMark);
     newDiv.addEventListener("click", handleCardClick);
 
-    // append the div to the element with an id of game
     gameContainer.append(newDiv);
   }
 }
 
-// TODO: Implement this function!
-function handleCardClick(event) {
-  // you can use event.target to see which element was clicked
-  console.log("you just clicked", event.target);
+gameContainer.addEventListener("click", handleCardClick);
+
+
+function handleCardClick(event) { 
+  if (!canClick) {
+    return;
+  }
+  const clickedElement = event.target;
+  const clickedCard = clickedElement.closest(".card");
+
+  if (clickedCard && !selectedCards.includes(clickedCard)) {
+    const originalColor = clickedCard.classList[1];
+
+    console.log("Clicked Card Color:", originalColor);
+
+    clickedCard.style.backgroundColor = originalColor;
+    clickedCard.querySelector(".question-mark").style.display = "none";
+
+    selectedCards.push(clickedCard);
+
+    if(selectedCards.length === 2) {
+        canClick = false;
+
+        const firstMatch = selectedCards[0].classList[1] === selectedCards[1].classList[1];
+
+        if (firstMatch ) {
+          setTimeout(() => {
+            canClick = true;
+            selectedCards = [];
+            matchedPairsCount++;
+            checkGameWon();
+          }, 1000);
+        } else {
+          setTimeout(() => {
+            for (const card of selectedCards) {
+              card.style.backgroundColor = "";
+              card.querySelector(".question-mark").style.display = "";
+            }
+            canClick = true;
+            selectedCards = [];
+            score++;
+            checkGameWon();
+        }, 1000);
+      }
+    }
+  }
 }
 
-// when the DOM loads
+function createRestartButton() {
+  restartButton = document.createElement("button");
+  restartButton.textContent = `Restart Game | Score: ${score}`;
+  restartButton.classList.add("button");
+  restartButton.style.display = "none";
+  restartButton.addEventListener("click", restartGame);
+
+  const buttonContainer = document.createElement("div");
+  buttonContainer.classList.add("button-container");
+  buttonContainer.appendChild(restartButton);
+
+  restartButtonContainer.appendChild(buttonContainer);
+}
+
+function restartGame() {
+  canClick = true;
+  selectedCards =[];
+  score = 0;
+
+  const allCards = document.querySelectorAll(".card");
+  allCards.forEach(card => {
+    card.style.backgroundColor = "";
+    card.querySelector(".question-mark").style.display = "";
+  });
+
+  while (gameContainer.firstChild) {
+    gameContainer.removeChild(gameContainer.firstChild);
+  }
+
+  shuffledColors = shuffle(COLORS);
+  createDivsForColors(shuffledColors);
+
+  restartButton.style.display = "none";
+}
+
+
+function checkGameWon() {
+  const totalPairs = COLORS.length / 2;
+ 
+  console.log("Matched pairs:", matchedPairsCount);
+  console.log("Score:", score);
+
+    if (matchedPairsCount === totalPairs) {
+      console.log("GAME WON!");
+      restartButton.textContent = `Restart Game | Score: ${score}`;
+     restartButton.style.display = "block";
+    } else {
+      console.log("Game not yet won");
+      restartButton.style.display = "none";
+    }
+  }
+
 createDivsForColors(shuffledColors);
+createRestartButton();
+checkGameWon();
